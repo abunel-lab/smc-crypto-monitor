@@ -1,0 +1,11 @@
+node_modules/
+dist/
+.pnpm-store/
+*.log
+.env
+wwew/backups/
+wwew/artifacts/api-server/dist/
+wwew/artifacts/dashboard/dist/
+wwew/node_modules/
+*.map
+.replit.backup

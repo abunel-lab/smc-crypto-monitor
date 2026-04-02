@@ -1,0 +1,192 @@
+openapi: 3.1.0
+info:
+  title: Api
+  version: 0.1.0
+  description: API specification
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: monitor
+    description: Crypto monitor operations
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      description: Returns server health status
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+  /monitor/status:
+    get:
+      operationId: getMonitorStatus
+      tags: [monitor]
+      summary: Get monitor status
+      description: Returns live market data, symbol status, trades, and performance
+      responses:
+        "200":
+          description: Monitor status
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/MonitorStatus"
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+    SymbolStatus:
+      type: object
+      properties:
+        priceOkx:
+          type: number
+        priceCg:
+          type: number
+        oi:
+          type: number
+        volume:
+          type: number
+        funding:
+          type: number
+        bias:
+          type: string
+        tf4h:
+          type: string
+        tf1h:
+          type: string
+        tf15m:
+          type: string
+        tf5m:
+          type: string
+        signal:
+          type: string
+        confidence:
+          type: string
+        entrySignal:
+          type: string
+          nullable: true
+        entryPrice:
+          type: number
+          nullable: true
+        sl:
+          type: number
+          nullable: true
+        tp:
+          type: number
+          nullable: true
+      required:
+        - priceOkx
+        - priceCg
+        - oi
+        - volume
+        - funding
+        - bias
+        - tf4h
+        - tf1h
+        - tf15m
+        - tf5m
+        - signal
+        - confidence
+        - entrySignal
+        - entryPrice
+        - sl
+        - tp
+    Trade:
+      type: object
+      properties:
+        id:
+          type: string
+        symbol:
+          type: string
+        direction:
+          type: string
+          enum: [BUY, SELL]
+        entry:
+          type: number
+        sl:
+          type: number
+        tp:
+          type: number
+        status:
+          type: string
+          enum: [OPEN, WIN, LOSS]
+        openedAt:
+          type: number
+        closedAt:
+          type: number
+          nullable: true
+        pnlPct:
+          type: number
+          nullable: true
+      required:
+        - id
+        - symbol
+        - direction
+        - entry
+        - sl
+        - tp
+        - status
+        - openedAt
+    Performance:
+      type: object
+      properties:
+        wins:
+          type: number
+        losses:
+          type: number
+        winRate:
+          type: number
+        balance:
+          type: number
+        initialBalance:
+          type: number
+        equityHistory:
+          type: array
+          items:
+            type: number
+      required:
+        - wins
+        - losses
+        - winRate
+        - balance
+        - initialBalance
+        - equityHistory
+    MonitorStatus:
+      type: object
+      properties:
+        symbols:
+          type: array
+          items:
+            type: string
+        symbolStatus:
+          type: object
+          additionalProperties:
+            $ref: "#/components/schemas/SymbolStatus"
+        performance:
+          $ref: "#/components/schemas/Performance"
+        openTrades:
+          type: array
+          items:
+            $ref: "#/components/schemas/Trade"
+        recentTrades:
+          type: array
+          items:
+            $ref: "#/components/schemas/Trade"
+      required:
+        - symbols
+        - symbolStatus
+        - performance
+        - openTrades
+        - recentTrades
